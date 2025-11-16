@@ -1,11 +1,31 @@
 package com.example.nebula.browser
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.Text
 import com.example.nebula.ui.components.core.PanelView
 
 @Composable
 fun BrowserPanel(modifier: Modifier = Modifier) {
-    PanelView(name = "Browser Panel", backgroundColor = Color(0xFFBF360C).copy(alpha = 0.7f), modifier = modifier)
+    PanelView(
+        backgroundColor = Color(0xFFBF360C).copy(alpha = 0.7f),
+        modifier = modifier.padding(16.dp).border(
+            1.dp, Color.White.copy(alpha = 0.1f),
+            RoundedCornerShape(12.dp)
+        )
+    ) {
+        Text(
+            text = "Browser Panel",
+            style = MaterialTheme.typography.headlineMedium,
+            textAlign = TextAlign.Center,
+            color = Color.White
+        )
+    }
 }
