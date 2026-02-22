@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,6 +19,8 @@ import com.example.nebula.home.widgets.FeedWidget
 import com.example.nebula.home.widgets.QuickLaunchWidget
 import com.example.nebula.home.widgets.WeatherWidget
 import com.example.nebula.ui.components.core.PanelView
+import com.example.nebula.ui.theme.NebulaGlow
+import com.example.nebula.ui.theme.NebulaPurple
 
 @Composable
 fun WidgetAreaPanel(
@@ -30,9 +31,9 @@ fun WidgetAreaPanel(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     Row(modifier = modifier) {
-        // ── Left: clock + weather + quick launch ────────────────────
+        // ── Left: clock + weather + quick launch (cyan tinted glass) ────────
         PanelView(
-            backgroundColor = Color(0xFF004D40).copy(alpha = 0.7f),
+            backgroundColor = NebulaGlow,
             modifier = Modifier
                 .weight(0.55f)
                 .fillMaxHeight()
@@ -51,9 +52,9 @@ fun WidgetAreaPanel(
             }
         }
 
-        // ── Right: RSS news feed ─────────────────────────────────────
+        // ── Right: RSS news feed (violet tinted glass) ───────────────────────
         PanelView(
-            backgroundColor = Color(0xFF1A237E).copy(alpha = 0.7f),
+            backgroundColor = NebulaPurple,
             modifier = Modifier
                 .weight(0.45f)
                 .fillMaxHeight(),

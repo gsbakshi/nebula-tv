@@ -1,80 +1,57 @@
 package com.example.nebula.ui.components.navigation
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
-import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Text
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Card
-import androidx.tv.material3.CardColors
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.Surface
-import com.example.nebula.ui.components.core.PanelView
+import androidx.tv.material3.ExperimentalTvMaterial3Api
+import androidx.tv.material3.Text
+import com.example.nebula.ui.theme.NebulaGlow
+import com.example.nebula.ui.theme.StarWhite
 
+private val itemShape = RoundedCornerShape(percent = 50)
+
+@OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
 fun NavigationItem(
     label: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
-    val interactionSource = remember { MutableInteractionSource() }
-
-    Card (
+    Card(
         onClick = onClick,
-        modifier = Modifier.width(72.dp),
-        shape = CardDefaults.shape(RoundedCornerShape(4.dp)),
+        modifier = modifier,
+        shape = CardDefaults.shape(itemShape),
         colors = CardDefaults.colors(
-            containerColor = if (isSelected) Color(0xFF030507) else Color.Transparent,
-            focusedContainerColor = Color(3, 5, 7),
-            pressedContainerColor =  Color(3, 5, 7).copy(alpha = 0.8f),
-            contentColor = if (isSelected) Color(0xFF030507) else Color.Transparent,
-            pressedContentColor = Color(248, 250, 252).copy(alpha = 0.8f),
-            focusedContentColor = Color(248, 250, 252).copy(alpha = 0.8f)
-            ),
-        scale = CardDefaults.scale(focusedScale = 1.1f), // TV focus effect
+            containerColor = if (isSelected) NebulaGlow.copy(alpha = 0.14f) else androidx.compose.ui.graphics.Color.Transparent,
+            focusedContainerColor = StarWhite.copy(alpha = 0.12f),
+            pressedContainerColor = StarWhite.copy(alpha = 0.08f),
+        ),
+        scale = CardDefaults.scale(focusedScale = 1.05f),
         border = CardDefaults.border(
-            pressedBorder = Border(
-                BorderStroke(
-                    2.dp,
-                    Color(30, 41, 59)
-                )
-            ),
-            focusedBorder = Border(
-                BorderStroke(
-                    2.dp,
-                    Color(30, 41, 59)
-                )
-            )
-        )
+            border = Border(BorderStroke(0.dp, androidx.compose.ui.graphics.Color.Transparent)),
+            focusedBorder = Border(BorderStroke(0.dp, androidx.compose.ui.graphics.Color.Transparent)),
+        ),
     ) {
-        PanelView(
-            backgroundColor = Color.Transparent,
-            modifier = modifier // Apply the passed modifier first
-                .focusable(interactionSource = interactionSource)
-                .padding(8.dp)
-                .fillMaxWidth()
-        ) {
+        Box(modifier = Modifier.padding(horizontal = 22.dp, vertical = 9.dp)) {
             Text(
-                text = label,
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.Center,
-                color = Color.White
+                text = label.uppercase(),
+                style = TextStyle(
+                    fontSize = 10.sp,
+                    fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
+                    letterSpacing = 3.5.sp,
+                    color = if (isSelected) NebulaGlow else StarWhite.copy(alpha = 0.38f),
+                ),
             )
         }
     }

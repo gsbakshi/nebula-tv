@@ -17,7 +17,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             // Apply your TV-specific Material 3 Compose theme here
-            NebulaTheme (isInDarkTheme = true) { // This is from androidx.tv.material3
+            NebulaTheme () { // This is from androidx.tv.material3
                 Surface(
                     // Use androidx.tv.material3.Surface
                     modifier = Modifier.fillMaxSize(),
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DefaultPreviewOfTVLauncherScreen() {
     // For older tv-material:
-    NebulaTheme (isInDarkTheme = true) {
+    NebulaTheme () {
         Surface(modifier = Modifier.fillMaxSize(), shape = RectangleShape) {
             LauncherScreen()
         }

@@ -26,12 +26,13 @@ import com.example.nebula.ui.components.navigation.NavigationBar
 @Composable
 fun LauncherScreen(navController: NavHostController = rememberNavController()) {
     var currentView by remember { mutableStateOf(ViewScreen.WIDGETS) }
-
-    // Hoist BrowserViewModel here so the home panel can navigate to a URL and switch panels.
-    // BrowserPanel's internal viewModel() call returns the same instance (same ViewModelStoreOwner).
     val browserViewModel: BrowserViewModel = viewModel()
 
     Box(modifier = Modifier.fillMaxSize()) {
+        // ── Animated starfield fills the entire window ───────────────────────
+        StarfieldBackground(modifier = Modifier.fillMaxSize())
+
+        // ── App chrome floats above the starfield ────────────────────────────
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -41,12 +42,11 @@ fun LauncherScreen(navController: NavHostController = rememberNavController()) {
                 onScreenSelected = { screen -> currentView = screen },
                 modifier = Modifier.fillMaxWidth(),
             )
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .padding(16.dp),
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
                 when (currentView) {
                     ViewScreen.WIDGETS -> WidgetAreaPanel(
