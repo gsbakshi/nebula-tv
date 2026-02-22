@@ -34,6 +34,14 @@ class BrowserViewModel(application: Application) : AndroidViewModel(application)
     private val _state = MutableStateFlow(BrowserState())
     val state: StateFlow<BrowserState> = _state.asStateFlow()
 
+    // Set by MainActivity when an external http/https intent arrives.
+    // LauncherScreen observes this to switch to the BROWSER panel, then calls consumeExternalUrl().
+    private val _pendingExternalUrl = MutableStateFlow<String?>(null)
+    val pendingExternalUrl: StateFlow<String?> = _pendingExternalUrl.asStateFlow()
+
+    fun openExternal(url: String) { _pendingExternalUrl.value = url }
+    fun consumeExternalUrl() { _pendingExternalUrl.value = null }
+
     init {
         session.navigationDelegate = object : NavigationDelegate {
             override fun onCanGoBack(session: GeckoSession, canGoBack: Boolean) {

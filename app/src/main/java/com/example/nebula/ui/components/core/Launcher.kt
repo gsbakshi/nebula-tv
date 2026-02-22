@@ -6,10 +6,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,6 +29,16 @@ import com.example.nebula.ui.components.navigation.NavigationBar
 fun LauncherScreen(navController: NavHostController = rememberNavController()) {
     var currentView by remember { mutableStateOf(ViewScreen.WIDGETS) }
     val browserViewModel: BrowserViewModel = viewModel()
+    val pendingExternalUrl by browserViewModel.pendingExternalUrl.collectAsStateWithLifecycle()
+
+    // When MainActivity receives an external http/https intent, switch to the browser panel.
+    LaunchedEffect(pendingExternalUrl) {
+        pendingExternalUrl?.let { url ->
+            browserViewModel.navigate(url)
+            currentView = ViewScreen.BROWSER
+            browserViewModel.consumeExternalUrl()
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         // ── Animated starfield fills the entire window ───────────────────────

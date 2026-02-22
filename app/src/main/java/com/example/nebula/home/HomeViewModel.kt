@@ -6,7 +6,6 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nebula.AppInfo
-import com.example.nebula.BuildConfig
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
@@ -145,31 +144,65 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun fetchWeather(): WeatherState {
-        val apiKey = BuildConfig.OPEN_WEATHER_MAP_API_KEY
-        if (apiKey.isBlank()) {
-            return WeatherState.Error("Add OPEN_WEATHER_MAP_API_KEY to local.properties")
-        }
         return try {
             withTimeout(15_000L) {
-                val url = "https://api.openweathermap.org/data/2.5/weather?q=Singapore&appid=$apiKey&units=metric"
-                val conn = URL(url).openConnection()
-                conn.connectTimeout = 10_000
-                conn.readTimeout = 10_000
-                val json = JSONObject(conn.getInputStream().bufferedReader().readText())
+                // Step 1: IP geolocation — free, no key required
+                val geoConn = URL("http://ip-api.com/json/?fields=lat,lon,city").openConnection()
+                geoConn.connectTimeout = 8_000
+                geoConn.readTimeout = 8_000
+                val geo = JSONObject(geoConn.getInputStream().bufferedReader().readText())
+                val lat = geo.getDouble("lat")
+                val lon = geo.getDouble("lon")
+                val city = geo.optString("city", "")
+
+                // Step 2: Open-Meteo forecast — free, no key required
+                val meteoUrl = "https://api.open-meteo.com/v1/forecast" +
+                    "?latitude=$lat&longitude=$lon" +
+                    "&current=temperature_2m,apparent_temperature,weathercode" +
+                    "&temperature_unit=celsius&timezone=auto"
+                val meteoConn = URL(meteoUrl).openConnection()
+                meteoConn.connectTimeout = 8_000
+                meteoConn.readTimeout = 8_000
+                val current = JSONObject(meteoConn.getInputStream().bufferedReader().readText())
+                    .getJSONObject("current")
+
                 WeatherState.Success(
-                    temperature = "%.0f°C".format(json.getJSONObject("main").getDouble("temp")),
-                    description = json.getJSONArray("weather").getJSONObject(0)
-                        .getString("description").replaceFirstChar { it.uppercaseChar() },
-                    city = json.getString("name"),
+                    temperature = "%.0f°C".format(current.getDouble("temperature_2m")),
+                    description = wmoDescription(current.getInt("weathercode")),
+                    city = city,
                 )
             }
         } catch (_: TimeoutCancellationException) {
             WeatherState.Error("Request timed out")
         } catch (e: CancellationException) {
-            throw e  // propagate coroutine cancellation — don't swallow it
+            throw e
         } catch (e: Exception) {
             WeatherState.Error(e.message ?: "Weather unavailable")
         }
+    }
+
+    private fun wmoDescription(code: Int): String = when (code) {
+        0          -> "Clear Sky"
+        1          -> "Mainly Clear"
+        2          -> "Partly Cloudy"
+        3          -> "Overcast"
+        45, 48     -> "Foggy"
+        51, 53     -> "Drizzle"
+        55         -> "Heavy Drizzle"
+        61         -> "Light Rain"
+        63         -> "Rain"
+        65         -> "Heavy Rain"
+        71         -> "Light Snow"
+        73         -> "Snow"
+        75         -> "Heavy Snow"
+        77         -> "Snow Grains"
+        80         -> "Light Showers"
+        81         -> "Showers"
+        82         -> "Heavy Showers"
+        85, 86     -> "Snow Showers"
+        95         -> "Thunderstorm"
+        96, 99     -> "Thunderstorm + Hail"
+        else       -> "Unknown"
     }
 
     private suspend fun fetchFeed(): FeedState {
