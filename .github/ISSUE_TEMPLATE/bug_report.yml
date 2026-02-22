@@ -1,0 +1,94 @@
+name: Bug Report
+description: Something isn't working as expected
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill out as much detail as possible — it helps us reproduce and fix the issue faster.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: Describe what went wrong…
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: How can we reliably trigger this bug?
+      placeholder: |
+        1. Open the app
+        2. Navigate to…
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      placeholder: What should have happened instead?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: panel
+    attributes:
+      label: Which panel is affected?
+      options:
+        - Home / Widgets
+        - App Grid
+        - Browser
+        - Navigation bar
+        - Other / Whole app
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device
+      description: TV model or Android device name
+      placeholder: e.g. Xiaomi Mi Box S, NVIDIA Shield TV, Fire TV Stick 4K
+    validations:
+      required: true
+
+  - type: input
+    id: android_version
+    attributes:
+      label: Android / TV OS version
+      placeholder: e.g. Android 11 (API 30)
+    validations:
+      required: true
+
+  - type: input
+    id: app_version
+    attributes:
+      label: App version / commit
+      placeholder: e.g. v0.1.0 or git SHA
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or stack trace
+      description: Paste logcat output here if available. Automatically formatted as code.
+      render: text
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Before submitting
+      options:
+        - label: I searched existing issues and this is not a duplicate
+          required: true
+        - label: I can reliably reproduce this issue
+          required: false
