@@ -1,14 +1,15 @@
 package com.example.nebula
 
+import android.app.Application
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import android.content.Context // Import Context
 
 data class AppInfo(
     val label: String,
@@ -17,28 +18,34 @@ data class AppInfo(
     val launchIntent: Intent?
 )
 
-class AppGridViewModel : ViewModel() {
-    private val _apps = MutableStateFlow<List<AppInfo>>(emptyList())
-    val apps: StateFlow<List<AppInfo>> = _apps
+// AndroidViewModel provides Application context safely — no need to pass Context from composables.
+class AppGridViewModel(application: Application) : AndroidViewModel(application) {
 
-    fun loadInstalledApps(context: Context) { // Pass Context here
-        viewModelScope.launch {
-            val pm = context.packageManager
+    private val _apps = MutableStateFlow<List<AppInfo>>(emptyList())
+    val apps: StateFlow<List<AppInfo>> = _apps.asStateFlow()
+
+    init {
+        loadApps()
+    }
+
+    private fun loadApps() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val pm = getApplication<Application>().packageManager
             val mainIntent = Intent(Intent.ACTION_MAIN, null).apply {
                 addCategory(Intent.CATEGORY_LAUNCHER)
             }
-            val resolveInfos = pm.queryIntentActivities(mainIntent, 0)
-            val appList = mutableListOf<AppInfo>()
-            for (resolveInfo in resolveInfos) {
-                val app = AppInfo(
-                    label = resolveInfo.loadLabel(pm).toString(),
-                    packageName = resolveInfo.activityInfo.packageName,
-                    icon = resolveInfo.loadIcon(pm),
-                    launchIntent = pm.getLaunchIntentForPackage(resolveInfo.activityInfo.packageName)
-                )
-                appList.add(app)
-            }
-            _apps.value = appList.sortedBy { it.label.lowercase() }
+            val appList = pm.queryIntentActivities(mainIntent, 0)
+                .map { info ->
+                    AppInfo(
+                        label = info.loadLabel(pm).toString(),
+                        packageName = info.activityInfo.packageName,
+                        icon = info.loadIcon(pm),
+                        launchIntent = pm.getLaunchIntentForPackage(info.activityInfo.packageName)
+                    )
+                }
+                .distinctBy { it.packageName }  // packages with multiple launcher activities appear once
+                .sortedBy { it.label.lowercase() }
+            _apps.value = appList
         }
     }
 }

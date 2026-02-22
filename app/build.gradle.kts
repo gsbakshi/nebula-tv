@@ -20,6 +20,13 @@ android {
     }
 
     buildTypes {
+        debug {
+            ndk {
+                // Only package the ABI of your TV dev device — keeps GeckoView APK manageable.
+                // Remove this filter for release builds (handled below via no filter on release).
+                abiFilters += listOf("armeabi-v7a")
+            }
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
