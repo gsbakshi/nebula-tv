@@ -1,4 +1,10 @@
+import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+val localProps = Properties().also { props ->
+    val f = rootProject.file("local.properties")
+    if (f.exists()) props.load(f.inputStream())
+}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -17,6 +23,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        buildConfigField(
+            "String",
+            "OPEN_WEATHER_MAP_API_KEY",
+            "\"${localProps["OPEN_WEATHER_MAP_API_KEY"] ?: ""}\""
+        )
     }
 
     buildTypes {
@@ -46,6 +57,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
