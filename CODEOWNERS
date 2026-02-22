@@ -1,1 +1,29 @@
-* @b4kshi
+# CODEOWNERS
+# Each line is a pattern followed by one or more owners.
+# The last matching rule takes precedence.
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# ── Default: all files require review from either owner ──────────────────────
+* @gsbakshi @b4kshi
+
+# ── Build & dependency config ─────────────────────────────────────────────────
+*.gradle.kts          @gsbakshi @b4kshi
+gradle/               @gsbakshi @b4kshi
+gradle.properties     @gsbakshi @b4kshi
+
+# ── Android manifest ─────────────────────────────────────────────────────────
+app/src/main/AndroidManifest.xml @gsbakshi @b4kshi
+
+# ── Browser (GeckoView) ───────────────────────────────────────────────────────
+app/src/main/java/com/example/nebula/browser/ @gsbakshi @b4kshi
+
+# ── UI components & theming ───────────────────────────────────────────────────
+app/src/main/java/com/example/nebula/ui/      @gsbakshi @b4kshi
+
+# ── Claude Code automation config ────────────────────────────────────────────
+.claude/              @gsbakshi
+
+# ── Repo & community health files ────────────────────────────────────────────
+CODEOWNERS            @gsbakshi
+CLAUDE.md             @gsbakshi
+.github/              @gsbakshi @b4kshi
