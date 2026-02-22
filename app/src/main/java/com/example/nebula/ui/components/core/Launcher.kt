@@ -40,9 +40,7 @@ fun LauncherScreen(navController: NavHostController = rememberNavController()) {
 
         // This is where main TV UI will be built.
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp), // Add some padding around the screen
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
 
@@ -50,9 +48,7 @@ fun LauncherScreen(navController: NavHostController = rememberNavController()) {
             NavigationBar(
                 currentScreen = currentView,
                 onScreenSelected = { screen -> currentView = screen },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp) // Space between content and bar
+                modifier = Modifier.fillMaxWidth()
             )
 
             // Top Area: Perhaps for a greeting or global status (e.g., time/weather preview)
